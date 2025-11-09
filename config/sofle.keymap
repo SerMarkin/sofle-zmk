@@ -97,7 +97,7 @@
 &bt BT_CLR  &bt BT_SEL 0                       &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3     &bt BT_SEL 4                      &trans      &trans          &trans        &trans           &trans           &studio_unlock
 &trans      &kp C_AC_DESKTOP_SHOW_ALL_WINDOWS  &kp K_BACK      &mmv MOVE_UP    &kp K_FORWARD    &msc SCRL_UP                      &kp PG_UP   &mkp LCLK       &mkp MCLK     &mkp RCLK        &kp PRINTSCREEN  &trans
 &trans      &none                              &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &msc SCRL_DOWN                    &kp PG_DN   &kp HOME        &kp UP_ARROW  &kp END          &kp DEL          &kp BSPC
-&trans      &kp K_UNDO                         &kp K_CUT       &kp K_COPY      &kp K_PASTE      &trans          &trans    &trans  &kp C_PREV  &kp LEFT_ARROW  &kp DOWN      &kp RIGHT_ARROW  &none            &none
+&trans      &kp LC(Z)                          &kp LC(X)       &kp LC(C)       &kp LC(V)        &trans          &trans    &trans  &kp C_PREV  &kp LEFT_ARROW  &kp DOWN      &kp RIGHT_ARROW  &none            &none
                                                &trans          &trans          &trans           &trans          &trans    &trans  &trans      &trans          &trans        &trans
             >;
 
