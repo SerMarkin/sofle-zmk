@@ -52,6 +52,13 @@
             bindings = <&bt BT_SEL 1 &to 2>;
             label = "KB_MAC";
         };
+
+        clear_mods: clear_mods {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&to 0>;
+            label = "CLEAR_MODS";
+        };
     };
 
     keymap {
@@ -82,21 +89,21 @@
 
         on_win {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans    &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                &kp LWIN  &trans  &kp LALT  &trans  &trans    &trans  &trans  &trans  &trans  &trans
             >;
         };
 
         on_mac {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans        &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans        &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans        &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans    &trans  &trans        &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                &kp LALT  &trans  &kp LEFT_WIN  &trans  &trans    &trans  &trans  &trans  &trans  &trans
             >;
         };
 
