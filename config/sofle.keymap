@@ -34,6 +34,11 @@
             if-layers = <3 2>;
             then-layer = <5>;
         };
+
+        top_level {
+            if-layers = <6 3>;
+            then-layer = <7>;
+        };
     };
 
     combos { compatible = "zmk,combos"; };
