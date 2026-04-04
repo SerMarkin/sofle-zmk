@@ -16,17 +16,18 @@
 #     cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
 #     artifact-name: corne_left_with_logging
 #
-# zmk-unicode: cmake-args below set ZMK_EXTRA_MODULES for CI. For local builds run
-# west update, then add the same flag with the absolute path to your zmk-unicode clone.
+# zmk-unicode: CI runs west in /tmp/.../zmk-config (not GITHUB_WORKSPACE), so zmk-unicode
+# lives next to zmk/ as ../zmk-unicode from zmk/app. Merge with repo root module (zephyr/module.yml)
+# in one -DZMK_EXTRA_MODULES; a second -D overwrites the workflow's first flag.
 #
 ---
 include:
   - board: nice_nano//zmk
     shield: sofle_left
-    cmake-args: '-DZMK_EXTRA_MODULES=$GITHUB_WORKSPACE/zmk-unicode'
+    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE};../zmk-unicode"'
   - board: nice_nano//zmk
     shield: sofle_right
-    cmake-args: '-DZMK_EXTRA_MODULES=$GITHUB_WORKSPACE/zmk-unicode'
+    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE};../zmk-unicode"'
   - board: nice_nano//zmk
     shield: settings_reset
-    cmake-args: '-DZMK_EXTRA_MODULES=$GITHUB_WORKSPACE/zmk-unicode'
+    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE};../zmk-unicode"'
