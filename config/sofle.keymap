@@ -115,7 +115,7 @@
 &trans        &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
 &trans        &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
 &kp LEFT_ALT  &trans  &trans    &trans  &trans    &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &kp LWIN  &trans  &kp LCTRL  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+                      &kp LWIN  &trans  &kp LCTRL &trans  &trans    &trans  &trans  &trans  &trans  &trans
             >;
         };
 
