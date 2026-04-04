@@ -34,14 +34,20 @@
             if-layers = <3 2>;
             then-layer = <5>;
         };
-
-        top_level {
-            if-layers = <6 3>;
-            then-layer = <7>;
-        };
     };
 
-    combos { compatible = "zmk,combos"; };
+    combos {
+        compatible = "zmk,combos";
+
+        // Physical Ctrl+Tab -> Alt+Tab (Windows app switcher).
+        // Key positions follow Sofle matrix order: row1 col0 = TAB (12), row3 col0 = LCTRL (36).
+        ct_tab_to_alt_tab {
+            timeout-ms = <50>;
+            layers = <0>;
+            bindings = <&kp LA(TAB)>;
+            key-positions = <12 36>;
+        };
+    };
 
     macros {
         kb_win: kb_mod {
@@ -49,8 +55,7 @@
             #binding-cells = <0>;
             wait-ms = <0>;
             tap-ms = <0>;
-            bindings = <&macro_press>, <&bt BT_SEL 0 &to 1>;
-
+            bindings = <&macro_press &bt BT_SEL 0 &to 1>;
             label = "KB_MOD";
         };
 
@@ -59,8 +64,7 @@
             #binding-cells = <0>;
             wait-ms = <0>;
             tap-ms = <0>;
-            bindings = <&macro_press>, <&bt BT_SEL 1 &to 2>;
-
+            bindings = <&macro_press &bt BT_SEL 1 &to 2>;
             label = "KB_MAC";
         };
 
@@ -100,11 +104,11 @@
 
         on_win {
             bindings = <
-&trans  &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans    &trans  &trans    &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &kp LWIN  &trans  &kp LALT  &trans  &trans    &trans  &trans  &trans  &trans  &trans
+&trans        &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans        &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans        &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&kp LEFT_ALT  &trans  &trans    &trans  &trans    &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
+                &kp LWIN  &trans  &kp LCTRL  &trans  &trans    &trans  &trans  &trans  &trans  &trans
             >;
         };
 
@@ -187,7 +191,7 @@
             display-name = "adjust";
             bindings = <
 &clear_mods        &kb_win          &kb_mac          &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                          &none  &none  &none  &none  &none  &none
-&ext_power EP_TOG  &to 1            &to 2            &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                       &none  &none  &none  &none  &none  &none
+&ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                       &none  &none  &none  &none  &none  &none
 &none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                 &none  &none  &none  &none  &none  &none
 &none              &none            &none            &none            &none            &bootloader      &trans    &soft_off  &none  &none  &none  &none  &none  &none
                                     &none            &none            &none            &none            &none     &none      &none  &none  &none  &none
