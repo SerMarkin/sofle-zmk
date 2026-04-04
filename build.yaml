@@ -15,12 +15,18 @@
 #     shield: corne_left
 #     cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
 #     artifact-name: corne_left_with_logging
-# 
+#
+# zmk-unicode: cmake-args below set ZMK_EXTRA_MODULES for CI. For local builds run
+# west update, then add the same flag with the absolute path to your zmk-unicode clone.
+#
 ---
 include:
   - board: nice_nano//zmk
     shield: sofle_left
+    cmake-args: '-DZMK_EXTRA_MODULES=$GITHUB_WORKSPACE/zmk-unicode'
   - board: nice_nano//zmk
     shield: sofle_right
+    cmake-args: '-DZMK_EXTRA_MODULES=$GITHUB_WORKSPACE/zmk-unicode'
   - board: nice_nano//zmk
     shield: settings_reset
+    cmake-args: '-DZMK_EXTRA_MODULES=$GITHUB_WORKSPACE/zmk-unicode'
