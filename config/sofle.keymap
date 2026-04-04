@@ -60,18 +60,19 @@
         kb_win: kb_mod {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <0>;
-            tap-ms = <0>;
-            bindings = <&macro_press &bt BT_SEL 0 &to 1>;
+            // Tap each step (press+release). macro_press breaks &bt / &to on recent ZMK.
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&bt BT_SEL 0 &to 1>;
             label = "KB_MOD";
         };
 
         kb_mac: kb_mac {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <0>;
-            tap-ms = <0>;
-            bindings = <&macro_press &bt BT_SEL 1 &to 2>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings = <&bt BT_SEL 1 &to 2>;
             label = "KB_MAC";
         };
 
