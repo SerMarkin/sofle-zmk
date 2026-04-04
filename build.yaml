@@ -16,18 +16,18 @@
 #     cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
 #     artifact-name: corne_left_with_logging
 #
-# zmk-unicode: CI runs west in /tmp/.../zmk-config (not GITHUB_WORKSPACE), so zmk-unicode
-# lives next to zmk/ as ../zmk-unicode from zmk/app. Merge with repo root module (zephyr/module.yml)
-# in one -DZMK_EXTRA_MODULES; a second -D overwrites the workflow's first flag.
+# zmk-unicode: Zephyr 4.1 requires absolute paths for extra modules (no ../ DTS_ROOT).
+# After `west update`, zmk-unicode lives at ${GITHUB_WORKSPACE}/zmk-unicode when CI uses the
+# repo as the west workspace (no root zephyr/module.yml — that used to force /tmp/zmk-config).
 #
 ---
 include:
   - board: nice_nano//zmk
     shield: sofle_left
-    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE};../zmk-unicode"'
+    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/zmk-unicode"'
   - board: nice_nano//zmk
     shield: sofle_right
-    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE};../zmk-unicode"'
+    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/zmk-unicode"'
   - board: nice_nano//zmk
     shield: settings_reset
-    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE};../zmk-unicode"'
+    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/zmk-unicode"'
