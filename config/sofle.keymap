@@ -27,11 +27,25 @@
 
 / {
     behaviors {
-        // Ctrl+Tab -> Alt+Tab: combos with modifier keys are unreliable; mod-morph on Tab works.
+        /*
+         * Ctrl+Tab -> Alt+Tab cycling (Windows task switcher):
+         * &kp LA(TAB) releases Alt after each tap, so repeated Tab does not cycle.
+         * Tri-state swapper: 1st tap toggles LALT on + Tab; further taps are Tab only;
+         * interrupt toggles LALT off. timeout-ms ends the sequence if stuck.
+         * ignored-key-positions: default_layer LEFT_SHIFT (24), LCTRL (36) so Shift+Tab / Ctrl do not end the sequence early.
+         */
+        win_alt_tab_swap: win_alt_tab_swap {
+            compatible = "zmk,behavior-tri-state";
+            #binding-cells = <0>;
+            bindings = <&kt LALT>, <&kp TAB>, <&kt LALT>;
+            ignored-key-positions = <24 36>;
+            timeout-ms = <2000>;
+        };
+
         tab_win_alt_tab: tab_win_alt_tab {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
-            bindings = <&kp TAB>, <&kp LA(TAB)>;
+            bindings = <&kp TAB>, <&win_alt_tab_swap>;
             mods = <(MOD_LCTL)>;
         };
     };
@@ -142,7 +156,7 @@
             display-name = "lower";
             bindings = <
 &trans   &kp F1     &kp F2             &kp F3     &kp F4         &kp F5                       &kp F6        &kp F7      &kp F8     &kp F9                   &kp F10                   &kp F11
-&kp DEL  &kp EXCL   &kp AT_SIGN        &kp POUND  &kp DOLLAR     &kp PRCNT                    &kp CARET     &kp AMPS    &kp STAR   &kp KP_LEFT_PARENTHESIS  &kp KP_RIGHT_PARENTHESIS  &kp F12
+&kp DEL  &kp EXCL   &kp AT_SIGN        &kp POUND  &kp DOLLAR     &kp PRCNT                    &kp CARET     &kp AMPS    &kp STAR   &kp LPAR  &kp RPAR  &kp F12
 &trans   &kp GRAVE  &kp DOUBLE_QUOTES  &kp POUND  &kp SEMICOLON  &kp EQUAL                    &kp KP_PLUS   &kp QMARK   &kp PIPE   &kp LBRC                 &kp RBRC                  &kp PIPE
 &trans   &trans     &trans             &trans     &trans         &trans     &trans    &trans  &kp KP_COMMA  &kp KP_DOT  &kp COMMA  &kp LBKT                 &kp RBKT                  &kp BSLH
                     &trans             &trans     &trans         &trans     &trans    &trans  &trans        &trans      &trans     &trans
