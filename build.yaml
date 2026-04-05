@@ -1,4 +1,5 @@
-# This file generates the GitHub Actions matrix.
+# Build matrix for .github/workflows/build.yml (reusable workflow uses this file via yq).
+# nice_nano//zmk is the ZMK board variant required for Zephyr 4.1+ (see ZMK board variant docs).
 # For simple board + shield combinations, add them to the top level board and
 # shield arrays, for more control, add individual board + shield combinations
 # to the `include` property. You can also use the `cmake-args` property to
@@ -15,19 +16,12 @@
 #     shield: corne_left
 #     cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
 #     artifact-name: corne_left_with_logging
-#
-# zmk-unicode: Zephyr 4.1 requires absolute paths for extra modules (no ../ DTS_ROOT).
-# After `west update`, zmk-unicode lives at ${GITHUB_WORKSPACE}/zmk-unicode when CI uses the
-# repo as the west workspace (no root zephyr/module.yml — that used to force /tmp/zmk-config).
-#
+# 
 ---
 include:
   - board: nice_nano//zmk
     shield: sofle_left
-    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/zmk-unicode"'
   - board: nice_nano//zmk
     shield: sofle_right
-    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/zmk-unicode"'
   - board: nice_nano//zmk
     shield: settings_reset
-    cmake-args: '-DZMK_EXTRA_MODULES="${GITHUB_WORKSPACE}/zmk-unicode"'

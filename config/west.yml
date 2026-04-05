@@ -1,16 +1,12 @@
+# West workspace: this repo’s config/ is the manifest; zmk + Zephyr are fetched via zmk’s app/west.yml.
 manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: urob
-      url-base: https://github.com/urob
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: main
       import: app/west.yml
-    - name: zmk-unicode
-      remote: urob
-      revision: main
   self:
     path: config

@@ -4,12 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200  // default: 600
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 20    // default: 10
+/* Pointing (mouse move / scroll): stock ZMK defaults are 600 / 10; values below override them. */
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 20
 
 #include <behaviors.dtsi>
-#include <behaviors/unicode.dtsi>
-#include <dt-bindings/zmk-unicode/uc.h>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/ext_power.h>
 #include <dt-bindings/zmk/keys.h>
@@ -17,16 +16,14 @@
 #include <dt-bindings/zmk/pointing.h>
 #include <dt-bindings/zmk/rgb.h>
 
-#define BASE 0
-#define LOWER 1
-#define RAISE 2
-#define ADJUST 3
-
-// Unicode: zmk-unicode. kb_win / kb_mac also call UC_SET_* so &uc matches the active host.
-// Windows: install WinCompose. macOS: add input source "Unicode Hex Input" (Other).
-&uc {
-    default-mode = <UC_MODE_WIN_COMPOSE>;
-};
+/*
+ * Layer indices (order in this keymap block):
+ *  0 default_layer      4 win_layer_lower   (if-layers <3 1> -> 4)
+ *  1 on_win             5 mac_layer_lower   (if-layers <3 2> -> 5)
+ *  2 on_mac             6 win_raise_layer
+ *  3 base_lower         7 set_layer (adjust; if-layers <3 6> -> 7)
+ * &mo 3 = base_lower, &mo 6 = win_raise_layer, &mo 7 = set_layer (direct).
+ */
 
 / {
     behaviors {
@@ -44,17 +41,19 @@
     conditional_layers {
         compatible = "zmk,conditional-layers";
 
+        // base_lower (3) + on_win (1) -> win_layer_lower (4)
         win_lower {
             if-layers = <3 1>;
             then-layer = <4>;
         };
 
+        // base_lower (3) + on_mac (2) -> mac_layer_lower (5)
         mac_lower {
             if-layers = <3 2>;
             then-layer = <5>;
         };
 
-        // base_lower (3) + win_raise_layer (6) -> set_layer / adjust (7)
+        // base_lower (3) + win_raise_layer (6) -> set_layer (7)
         lower_raise_adjust {
             if-layers = <3 6>;
             then-layer = <7>;
@@ -62,25 +61,27 @@
     };
 
     macros {
+        // BT profile 0 + layer on_win (1)
         kb_win: kb_mod {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            // Tap each step. UC_SET_* switches zmk-unicode input mode for Win vs Mac host.
             wait-ms = <15>;
             tap-ms = <15>;
-            bindings = <&uc UC_SET_WIN_COMPOSE &bt BT_SEL 0 &to 1>;
+            bindings = <&bt BT_SEL 0 &to 1>;
             label = "KB_MOD";
         };
 
+        // BT profile 1 + layer on_mac (2)
         kb_mac: kb_mac {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <15>;
             tap-ms = <15>;
-            bindings = <&uc UC_SET_MACOS &bt BT_SEL 1 &to 2>;
+            bindings = <&bt BT_SEL 1 &to 2>;
             label = "KB_MAC";
         };
 
+        // Return to default layer (0)
         clear_mods: clear_mods {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -95,12 +96,11 @@
         default_layer {
             display-name = "default";
 
-            // ------------------------------------------------------------------------------------------------------------
-            // |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |  7    |  8    |  9   |   0   |   =   |
-            // |  ESC  |  Q  |  W  |  E   |  R   |  T   |                   |  Y   |  U    |  I    |  O   |   P   |   [   |
-            // |  TAB  |  A  |  S  |  D   |  F   |  G   |                   |  H   |  J    |  K    |  L   |   ;   |   ]   |
-            // | LCTRL |  Z  |  X  |  C   |  V   |  B   |  MUTE  |  |       |  N   |  M    |  ,    |  .   |   /   |   '   |
-            //               | GUI | DEL  |LSHIFT| LOWER|  ENTER |  | SPACE | RAISE|BACKSPC| ALT   | GUI  |
+            // Row 0: ESC | 1-5 | 6-0 | MINUS
+            // Row 1: Tab (LCtrl+Tab sends Alt+Tab) | Q-P | [
+            // Row 2: Shift | A-L | ; '
+            // Row 3: LCtrl | Z-B | mo ADJUST | C_MUTE | N-M | , . / | ]
+            // Thumb: LAlt | Caps | LGUI | Lower | Space | Enter | Raise | Bspc | Del | RGUI
 
             bindings = <
 &kp ESC         &kp N1  &kp N2        &kp N3    &kp N4    &kp N5                           &kp N6  &kp N7         &kp N8     &kp N9    &kp N0    &kp MINUS
@@ -115,6 +115,7 @@
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
+        // Windows-oriented modifiers on bottom row; other keys fall through to default_layer.
         on_win {
             bindings = <
 &trans        &trans  &trans    &trans  &trans    &trans                    &trans  &trans  &trans  &trans  &trans  &trans
@@ -125,6 +126,7 @@
             >;
         };
 
+        // macOS-oriented modifiers on bottom row; other keys fall through to default_layer.
         on_mac {
             bindings = <
 &trans     &trans  &trans    &trans  &trans        &trans                    &trans  &trans  &trans  &trans  &trans  &trans
@@ -135,15 +137,14 @@
             >;
         };
 
+        // Lower: F-keys row, symbols, numpad-style parens/plus on some keys (see bindings).
         base_lower {
             display-name = "lower";
-            // Printable symbols via Unicode (&uc) so output does not follow OS keyboard layout.
-            // F-keys and Del stay as HID usages (not layout-dependent for typing).
             bindings = <
 &trans   &kp F1     &kp F2             &kp F3     &kp F4         &kp F5                       &kp F6        &kp F7      &kp F8     &kp F9                   &kp F10                   &kp F11
-&kp DEL  &uc 0x0021 0 &uc 0x0040 0 &uc 0x0023 0 &uc 0x0024 0 &uc 0x0025 0 &uc 0x005E 0 &uc 0x0026 0 &uc 0x002A 0 &uc 0x0028 0 &uc 0x0029 0 &kp F12
-&trans   &uc 0x0060 0 &uc 0x0022 0 &uc 0x0023 0 &uc 0x003B 0 &uc 0x003D 0 &uc 0x002B 0 &uc 0x003F 0 &uc 0x007C 0 &uc 0x007B 0 &uc 0x007D 0 &uc 0x007C 0
-&trans   &trans     &trans             &trans     &trans         &trans     &trans    &trans  &uc 0x002C 0 &uc 0x002E 0 &uc 0x002C 0 &uc 0x005B 0 &uc 0x005D 0 &trans
+&kp DEL  &kp EXCL   &kp AT_SIGN        &kp POUND  &kp DOLLAR     &kp PRCNT                    &kp CARET     &kp AMPS    &kp STAR   &kp KP_LEFT_PARENTHESIS  &kp KP_RIGHT_PARENTHESIS  &kp F12
+&trans   &kp GRAVE  &kp DOUBLE_QUOTES  &kp POUND  &kp SEMICOLON  &kp EQUAL                    &kp KP_PLUS   &kp QMARK   &kp PIPE   &kp LBRC                 &kp RBRC                  &kp PIPE
+&trans   &trans     &trans             &trans     &trans         &trans     &trans    &trans  &kp KP_COMMA  &kp KP_DOT  &kp COMMA  &kp LBKT                 &kp RBKT                  &kp BSLH
                     &trans             &trans     &trans         &trans     &trans    &trans  &trans        &trans      &trans     &trans
             >;
 
@@ -152,21 +153,23 @@
                 <&inc_dec_kp PG_UP PG_DN>;
         };
 
+        // Shown when lower (3) + on_win (1): Ctrl+Z/X/C/V/B undo/cut/copy/paste; A = select all.
         win_layer_lower {
             bindings = <
 &trans  &trans     &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans     &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans     &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &kp LC(A)  &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &kp LC(Z)  &kp LC(X)  &kp LC(C)  &kp LC(V)  &kp LC(B)  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
                    &trans     &trans     &trans     &trans     &trans    &trans  &trans  &trans  &trans  &trans
             >;
         };
 
+        // Shown when lower (3) + on_mac (2): Cmd+Z/X/C/V/B; A = select all.
         mac_layer_lower {
             bindings = <
 &trans  &trans     &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans     &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans     &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &kp LG(A)  &trans     &trans     &trans     &trans                       &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &kp LG(B)  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
                    &trans     &trans     &trans     &trans     &trans    &trans  &trans  &trans  &trans  &trans
             >;
@@ -175,12 +178,10 @@
         win_raise_layer {
             display-name = "raise";
 
-            // ------------------------------------------------------------------------------------------------------------
-            // | BTCLR | BT1  | BT2  |  BT3  |  BT4  |  BT5 |                |      |      |       |      |       |       |
-            // |       | INS  | PSCR | GUI   |       |      |                | PGUP |      |   ^   |      |       |       |
-            // |       | ALT  | CTRL | SHIFT |       | CAPS |                | PGDN |   <- |   v   |  ->  |  DEL  | BKSPC |
-            // |       | UNDO | CUT  | COPY  | PASTE |      |      |  |      |      |      |       |      |       |       |
-            //                |      |       |       |      |      |  |      |      |      |       |      |
+            // Row 0: BT_CLR, BT_SEL 0-4, trans x3, bootloader, studio_unlock
+            // Row 1: trans, Mission Control, mouse / pointer / scroll, PgUp, clicks, arrows, PrtSc
+            // Row 2: trans, none, pointer move + scroll, PgDn, arrows, Bspc, Del
+            // Row 3: trans; soft_off; C_PREV; inner keys trans/none
 
             bindings = <
 &bt BT_CLR  &bt BT_SEL 0                       &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3     &bt BT_SEL 4                         &trans      &trans     &trans    &trans     &bootloader    &studio_unlock
@@ -196,13 +197,7 @@
         };
 
         set_layer {
-            // ----------------------------------------------------------------------------------------------------------------------------
-            // | BTCLR  |  BT1    |  BT2    |   BT3   |   BT4   |   BT5   |                  |      |      |       |      |       |       |
-            // | EXTPWR | RGB_HUD | RGB_HUI | RGB_SAD | RGB_SAI | RGB_EFF |                  |      |      |       |      |       |       |
-            // |        | RGB_BRD | RGB_BRI |         |         |         |                  |      |      |       |      |       |       |
-            // |        |         |         |         |         |         | RGB_TOG | |      |      |      |       |      |       |       |
-            //                    |         |         |         |         |         | |      |      |      |       |      |
-
+            // Adjust: clear + kb_win/kb_mac + BT 2-4 | ext power + RGB | RGB brightness | bootloader / soft off
             display-name = "adjust";
             bindings = <
 &clear_mods        &kb_win          &kb_mac          &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                          &none  &none  &none  &none  &none  &none
