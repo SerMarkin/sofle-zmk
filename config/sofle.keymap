@@ -28,7 +28,7 @@
 };
 
 / {
-    // Activate ADJUST layer by pressing raise and lower
+    // Conditional layers: win/mac lower variants; lower (3) + raise (6) -> adjust (7).
 
     conditional_layers {
         compatible = "zmk,conditional-layers";
@@ -41,6 +41,12 @@
         mac_lower {
             if-layers = <3 2>;
             then-layer = <5>;
+        };
+
+        // base_lower (3) + win_raise_layer (6) -> set_layer / adjust (7)
+        lower_raise_adjust {
+            if-layers = <3 6>;
+            then-layer = <7>;
         };
     };
 
